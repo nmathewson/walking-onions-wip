@@ -436,8 +436,9 @@ the relay.
     ; SNIPLocation: we're using a map here because it's natural
     ; to look up indices in maps.
     SNIPLocation = {
-        ; A SNIP's location is given as an index range in different
-        ; indices.
+        ; The keys of this mapping represents the routing indices in
+        ; which a SNIP appears.  The values represents the index ranges
+        ; that it occupies in those indices.
         * IndexId => IndexRange / ExtensionIndex,
     }
 

@@ -330,7 +330,7 @@ and in favor of higher values of `BREAK_TIES_LOW` is false.
 _Parameters_: `MIN_COUNT` (an integer), `BREAK_MULTI_LOW` (a boolean),
 `TYPE` (a SimpleType)
 
-    ; Encdoding
+    ; Encoding
     ThresholdOp = { op : "Threshold",
                     min_count : IntOpArgument,  ; No default.
                     ? multi_low: bool,          ; Default true.

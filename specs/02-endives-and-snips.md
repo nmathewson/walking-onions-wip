@@ -436,7 +436,7 @@ the relay.
     ; SNIPLocation: we're using a map here because it's natural
     ; to look up indices in maps.
     SNIPLocation = {
-        ; A SNIP's location is given as a index ranges in different
+        ; A SNIP's location is given as an index range in different
         ; indices.
         * IndexId => IndexRange / ExtensionIndex,
     }

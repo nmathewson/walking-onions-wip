@@ -275,10 +275,10 @@ can't interfere with each other.
         auth: SNIPSignature,
 
         ; Next comes the location of the SNIP within the ENDIVE.
-        index : bstr .cbor SNIPLocation,
+        index: bstr .cbor SNIPLocation,
 
         ; Finally comes the information about the router.
-        router : bstr .cbor SNIPRouterData,
+        router: bstr .cbor SNIPRouterData,
     ]
 
 (Computing the signature over a concatenation of objects is safe, since
@@ -371,9 +371,9 @@ published time, etc.
 
     ; SoftwareDescription replaces our old "version".
     SoftwareDescription = [
-      software : tstr,
-      version : tstr,
-      extra : tstr
+      software: tstr,
+      version: tstr,
+      extra: tstr
     ]
 
     ; Protocol versions: after a bit of experimentation, I think
@@ -386,18 +386,18 @@ published time, etc.
     ProtoId = ProtoIdEnum / int / tstr
 
     ProtoIdEnum = &(
-      Link      : 0,
-      LinkAuth  : 1,
-      Relay     : 2,
-      DirCache  : 3,
-      HSDir     : 4,
-      HSIntro   : 5,
-      HSRend    : 6,
-      Desc      : 7,
-      MicroDesc : 8,
-      Cons      : 9,
-      Padding   : 10,
-      FlowCtrl  : 11,
+      Link     : 0,
+      LinkAuth : 1,
+      Relay    : 2,
+      DirCache : 3,
+      HSDir    : 4,
+      HSIntro  : 5,
+      HSRend   : 6,
+      Desc     : 7,
+      MicroDesc: 8,
+      Cons     : 9,
+      Padding  : 10,
+      FlowCtrl : 11,
     )
     ; This type is limited to 64 bits, and that's fine.  If we ever
     ; need a protocol version higher than 63, we should allocate a
@@ -416,9 +416,9 @@ published time, etc.
     ; network parameter document with a corresponding tag.
     SinglePolicy = [
          ; Identifies which group of port classes we're talking about
-         tag : unsigned,
+         tag: unsigned,
          ; Bit-array of which port classes this relay supports.
-         policy : bstr
+         policy: bstr
     ]
 
 <!-- Section 2.2.2 --> <a id='S2.2.2'></a>
@@ -491,19 +491,19 @@ validated as described in "Design overview: Authentication" above.
         SingleSig / MultiSig,
 
         ; algorithm to use for the path through the merkle tree.
-        d_alg : DigestAlgorithm,
+        d_alg: DigestAlgorithm,
         ; Path through merkle tree, possibly empty.
-        merkle_path : MerklePath,
+        merkle_path: MerklePath,
 
         ; Lifespan information.  This is included as part of the input
         ; to the hash algorithm for the signature.
         LifespanInfo,
 
         ; optional nonce for hash algorithm.
-        ? nonce : bstr,
+        ? nonce: bstr,
 
         ; extensions for later use. These are not signed.
-        ? extensions : { * any => any },
+        ? extensions: { * any => any },
     ]
 
     ; We use this group to indicate when an object originated, and when
@@ -526,13 +526,13 @@ validated as described in "Design overview: Authentication" above.
 
         ; Value to subtract from "published" in order to find the first second
         ; at which this object should be accepted.
-        pre-valid : uint32,
+        pre-valid: uint32,
 
         ; Value to add to "published" in order to find the last
         ; second at which this object should be accepted.  The
         ; lifetime of an object is therefore equal to "(post-valid +
         ; pre-valid)".
-        post-valid : uint32,
+        post-valid: uint32,
     )
 
     ; A Lifespan is just the fields of LifespanInfo, encoded as a list.
@@ -546,15 +546,15 @@ validated as described in "Design overview: Authentication" above.
     SingleSig = [
        s_alg: SigningAlgorithm,
        ; One of signature and sig_reference must be present.
-       ?signature : bstr,
+       ?signature: bstr,
        ; sig_reference is an identifier for a signature that appears
        ; elsewhere, and can be fetched on request.  It should only be
        ; used with signature types too large to attach to SNIPs on their
        ; own.
-       ?sig_reference : bstr,
+       ?sig_reference: bstr,
        ; A prefix of the key or the key's digest, depending on the
        ; algorithm.
-       ?keyid : bstr,
+       ?keyid: bstr,
     ]
 
     MultiSig = [ + SingleSig ]
@@ -618,7 +618,7 @@ for the full algorithm, see section 04.
         ; Signatures across SNIPs, at some level of the Merkle tree.  Note
         ; that these signatures are not themselves signed -- having them
         ; signed would take another step in the voting algorithm.
-        snip_sigs : DetachedSNIPSignatures,
+        snip_sigs: DetachedSNIPSignatures,
 
         ; Signatures across the ParamDoc pieces.  Note that as with the
         ; DetachedSNIPSignatures, these signature are not themselves signed.
@@ -637,17 +637,17 @@ for the full algorithm, see section 04.
 
         ; Describes how to interpret the signatures over the SNIPs in this
         ; ENDIVE. See section 04 for the full algorithm.
-        sig_params : {
+        sig_params: {
             ; When should we say that the signatures are valid?
-            lifespan : Lifespan,
+            lifespan: Lifespan,
             ; Nonce to be used with the signing algorithm for the signatures.
-            ? signature-nonce : bstr,
+            ? signature-nonce: bstr,
 
             ; At what depth of a Merkle tree to the signatures apply?
             ; (If this value is 0, then only the root of the tree is signed.
             ; If this value is >= ceil(log2(n_leaves)), then every leaf is
             ; signed.).
-            signature-depth : uint,
+            signature-depth: uint,
 
             ; What digest algorithm is used for calculating the signatures?
             signature-digest-alg: DigestAlgorithm,
@@ -658,21 +658,21 @@ for the full algorithm, see section 04.
 
         ; Documents for clients/relays to learn about current network
         ; parameters.
-        client-param-doc : encoded-cbor .cbor ClientParamDoc,
-        relay-param-doc : encoded-cbor .cbor RelayParamDoc,
+        client-param-doc: encoded-cbor .cbor ClientParamDoc,
+        relay-param-doc: encoded-cbor .cbor RelayParamDoc,
 
         ; Definitions for index group.  Each "index group" is all
         ; applied to the same SNIPs.  (If there is one index group,
         ; then every relay is in at most one SNIP, and likely has several
         ; indices.  If there are multiple index groups, then relays
         ; can appear in more than one SNIP.)
-        indexgroups : [ *IndexGroup ],
+        indexgroups: [ *IndexGroup ],
 
         ; Information on particular relays.
         ;
         ; (The total number of SNIPs identified by an ENDIVE is at most
         ; len(indexgroups) * len(relays).)
-        relays : [ * ENDIVERouterData ],
+        relays: [ * ENDIVERouterData ],
 
         ; for future exensions
         * tstr => any,
@@ -684,18 +684,18 @@ for the full algorithm, see section 04.
     IndexGroup = {
         ; A list of all the indices that are built for this index group.
         ; An IndexId may appear in at most one group per ENDIVE.
-        indices : [ + IndexId ],
+        indices: [ + IndexId ],
         ; A list of keys to delete from SNIPs to build this index group.
-        omit_from_snips : [ *(int/tstr) ],
+        omit_from_snips: [ *(int/tstr) ],
         ; A list of keys to forward from SNIPs to the next relay in an EXTEND
         ; cell.  This can help the next relay know which keys to use in its
         ; handshake.
-        forward_with_extend : [ *(int/tstr) ],
+        forward_with_extend: [ *(int/tstr) ],
 
         ; A number of "gaps" to place in the Merkle tree after the SNIPs
         ; in this group.  This can be used together with signature-depth
         ; to give different index-groups independent signatures.
-        ? n_padding_entries : uint,
+        ? n_padding_entries: uint,
 
         ; A detailed description of how to build the index.
         + IndexId => IndexSpec,
@@ -715,7 +715,7 @@ for the full algorithm, see section 04.
     ; fallback for cases where we simply can't construct an index any other
     ; way.
     IndexSpec_Raw = {
-        type : Indextype_Raw,
+        type: Indextype_Raw,
         ; This index is constructed by taking relays by their position in the
         ; list from the list of ENDIVERouterData, and placing them at a given
         ; location in the routing index.  Each index range extends up to
@@ -727,11 +727,11 @@ for the full algorithm, see section 04.
     ; ENDIVERouterData index, and by their numeric spans on the index.
     IndexSpec_RawNumeric = {
         type: Indextype_RawNumeric,
-        first_index_pos : uint,
+        first_index_pos: uint,
         ; This index is constructed by taking relays by index from the list
         ; of ENDIVERouterData, and giving them a certain amount of "weight"
         ; in the index.
-        index_ranges: [ * [ idx : uint, span : uint ] ],
+        index_ranges: [ * [ idx: uint, span: uint ] ],
     }
 
     ; This index is computed from the weighted bandwidths of all the SNIPs.
@@ -757,23 +757,23 @@ for the full algorithm, see section 04.
         ; How many bytes of RSA identity data go into each indexpos entry?
         n_bytes: uint,
         ; Bitmap of which routers should be included.
-        members : bstr,
+        members: bstr,
     }
 
     ; This index is computed from the Ed25519 identity keys of all of the
     ; SNIPs.  It is used in the HSv3 directory ring.
     IndexSpec_Ed25519Id = {
-        type : Indextype_Ed25519Id,
+        type: Indextype_Ed25519Id,
         ; How many bytes of digest go into each indexpos entry?
-        n_bytes : uint,
+        n_bytes: uint,
         ; What digest do we use for building this ring?
-        d_alg : DigestAlgorithm,
+        d_alg: DigestAlgorithm,
         ; What bytes do we give to the hash before the ed25519?
-        prefix : bstr,
+        prefix: bstr,
         ; What bytes do we give to the hash after the ed25519?
-        suffix : bstr,
+        suffix: bstr,
         ; Bitmap of which routers should be included.
-        members : bstr,
+        members: bstr,
     }
 
     IndexSpec = IndexSpec_Raw /
@@ -817,13 +817,13 @@ recommended versions, authority certificates, and so on.
     ; A "parameter document" is like a tiny consensus that relays and clients
     ; can use to get network parameters.
     ParamDoc = [
-       sig : ParamDocSignature,
+       sig: ParamDocSignature,
        ; Client-relevant portion of the parameter document. Everybody fetches
        ; this.
-       cbody : encoded-cbor .cbor ClientParamDoc,
+       cbody: encoded-cbor .cbor ClientParamDoc,
        ; Relay-relevant portion of the parameter document. Only relays need to
        ; fetch this; the document can be validated without it.
-       ? sbody : encoded-cbor .cbor RelayParamDoc,
+       ? sbody: encoded-cbor .cbor RelayParamDoc,
     ]
     ParamDocSignature = [
        ; Multisignature or threshold signature of the concatenation
@@ -837,19 +837,19 @@ recommended versions, authority certificates, and so on.
        LifespanInfo,
 
        ; how are c_digest and s_digest the digest computed?
-       d_alg : DigestAlgorithm,
+       d_alg: DigestAlgorithm,
        ; Digest over the cbody field
-       c_digest : bstr,
+       c_digest: bstr,
        ; Digest over the sbody field
-       s_digest : bstr,
+       s_digest: bstr,
     ]
 
     ClientParamDoc = {
-       params : NetParams,
+       params: NetParams,
        ; List of certificates for all the voters.  These
        ; authenticate the keys used to sign SNIPs and ENDIVEs and votes,
        ; using the authorities longest-term identity keys.
-       voters : [ + bstr .cbor VoterCert ],
+       voters: [ + bstr .cbor VoterCert ],
 
        ; A division of exit ports into "classes" of ports.
        port-classes: PortClasses,
@@ -891,7 +891,7 @@ recommended versions, authority certificates, and so on.
     PortClasses = {
         ; identifies which port class grouping this is. Used to migrate
         ; from one group of port classes to another.
-        tag : uint,
+        tag: uint,
         ; list of the port classes.
         classes: { * IndexId => PortList },
     }
@@ -920,30 +920,30 @@ algorithm, but support more key types.
        ; signature algorithm.
        LifespanInfo,
        ; The keys and other data to be certified.
-       content : encoded-cbor .cbor CertContent,
+       content: encoded-cbor .cbor CertContent,
     ]
 
     ; The contents of the certificate that get signed.
     CertContent = {
        ; What kind of a certificate is this?
-       type : CertType,
+       type: CertType,
        ; A list of keys that are being certified in this document
-       keys : [ + CertifiedKey ],
+       keys: [ + CertifiedKey ],
        ; A list of other keys that you might need to know about, which
        ; are NOT certififed in this document.
-       ? extra : [ + CertifiedKey ],
+       ? extra: [ + CertifiedKey ],
        * tstr => any,
     }
 
     CertifiedKey = {
        ; What is the intended usage of this key?
-       usage : KeyUsage,
+       usage: KeyUsage,
        ; What cryptographic algorithm is this key used for?
-       alg : PKAlgorithm,
+       alg: PKAlgorithm,
        ; The actual key being certified.
-       data : bstr,
+       data: bstr,
        ; A human readable string.
-       ? remarks : tstr,
+       ? remarks: tstr,
        * tstr => any,
     }
 
@@ -959,24 +959,24 @@ able to parse and apply it.
     ; Binary diff specification.
     BinaryDiff = {
         ; This is version 1.
-        v : 1,
+        v: 1,
         ; Optionally, a diff can say what different digests
         ; of the document should be before and after it is applied.
         ; If there is more than one entry, parties MAY check one or
         ; all of them.
-        ? digest : { * DigestAlgorithm =>
-                         [ pre : Digest,
-                           post : Digest ]},
+        ? digest: { * DigestAlgorithm =>
+                         [ pre: Digest,
+                           post: Digest ]},
 
         ; Optionally, a diff can give some information to identify
         ; which document it applies to, and what document you get
         ; from applying it.  These might be a tuple of a document type
         ; and a publication type.
-        ? ident : [ pre : any, post : any ],
+        ? ident: [ pre: any, post: any ],
 
         ; list of commands to apply in order to the original document in
         ; order to get the transformed document
-        cmds : [ *DiffCommand ],
+        cmds: [ *DiffCommand ],
 
         ; for future extension.
         * tstr => any,
@@ -989,14 +989,14 @@ able to parse and apply it.
         ; Range of bytes to copy from the original document.
         ; Ranges include their starting byte.  The "offset" is relative to
         ; the end of the _last_ range that was copied.
-        offset : int,
-        length : uint,
+        offset: int,
+        length: uint,
     ]
 
     ; The other diff comment is to insert some bytes from the diff.
     InsertDiffCommand = [
         InsertBytesCmdId,
-        data : bstr,
+        data: bstr,
     ]
 
     DiffCommand = CopyDiffCommand / InsertDiffCommand

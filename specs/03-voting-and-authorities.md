@@ -222,7 +222,7 @@ All voting operations follow this metaformat:
 
     ; All a generic voting operation has to do is say what kind it is.
     GenericVotingOp = {
-        op : tstr,
+        op: tstr,
         * tstr => any,
     }
 
@@ -242,7 +242,7 @@ This voting operation takes no parameters, and always produces "no
 consensus".  It is encoded as:
 
     ; "Don't produce a consensus".
-    NoneOp = { op : "None" }
+    NoneOp = { op: "None" }
 
 When encounting an unrecognized or nonconforming voting operation,
 _or one which is not recognized by the consensus-method in use_, the
@@ -283,10 +283,10 @@ _Parameters_: `MIN_VOTES` (an integer), `BREAK_EVEN_LOW` (a boolean),
 `TYPE` (a SimpleType)
 
     ; Encoding:
-    MedianOp = { op : "Median",
-                 ? min_vote : IntOpArgument,  ; Default is 1.
-                 ? even_low : bool,           ; Default is true.
-                 type : SimpleType  }
+    MedianOp = { op: "Median",
+                 ? min_vote: IntOpArgument,  ; Default is 1.
+                 ? even_low: bool,           ; Default is true.
+                 type: SimpleType  }
 
 Discard all votes that are not of the specified `TYPE`. If there are
 fewer than `MIN_VOTES` votes remaining, return "no consensus".
@@ -309,10 +309,10 @@ _Parameters_: `MIN_COUNT` (an integer), `BREAK_TIES_LOW` (a boolean),
 `TYPE` (a SimpleType)
 
     ; Encoding:
-    ModeOp = { op : "Mode",
-               ? min_count : IntOpArgument,   ; Default 1.
-               ? tie_low : bool,              ; Default true.
-               type : SimpleType
+    ModeOp = { op: "Mode",
+               ? min_count: IntOpArgument,   ; Default 1.
+               ? tie_low: bool,              ; Default true.
+               type: SimpleType
     }
 
 Discard all votes that are not of the specified `TYPE`.  Of the
@@ -333,10 +333,10 @@ _Parameters_: `MIN_COUNT` (an integer), `BREAK_MULTI_LOW` (a boolean),
 `TYPE` (a SimpleType)
 
     ; Encoding
-    ThresholdOp = { op : "Threshold",
-                    min_count : IntOpArgument,  ; No default.
+    ThresholdOp = { op: "Threshold",
+                    min_count: IntOpArgument,  ; No default.
                     ? multi_low: bool,          ; Default true.
-                    type : SimpleType
+                    type: SimpleType
     }
 
 Discard all votes that are not of the specified `TYPE`.  Sort in
@@ -354,8 +354,8 @@ If no value has received at least `MIN_COUNT` votes, then return
 Parameters: `MIN_COUNT` (an integer >= 1)
 
     ; Encoding
-    BitThresholdOp = { op : "BitThreshold",
-                       min_count : IntOpArgument, ; No default.
+    BitThresholdOp = { op: "BitThreshold",
+                       min_count: IntOpArgument, ; No default.
     }
 
 These are usually not needed, but are quite useful for
@@ -393,9 +393,9 @@ Optional parameters: `TYPE` (a SimpleType.)
 
     ; Encoding:
     SetJoinOp = {
-       op : "SetJoin",
-       min_count : IntOpArgument,
-       ? type : SimpleType
+       op: "SetJoin",
+       min_count: IntOpArgument,
+       ? type: SimpleType
     }
 
 Discard all votes that are not lists.  From each vote,
@@ -445,10 +445,10 @@ Encoding:
 
     ; MapJoin operation encoding
     MapJoinOp = {
-       op : "MapJoin"
-       ? key_min_count : IntOpArgument, ; Default 1.
-       key_type : SimpleType,
-       item_op : ListOp / SimpleOp
+       op: "MapJoin"
+       ? key_min_count: IntOpArgument, ; Default 1.
+       key_type: SimpleType,
+       item_op: ListOp / SimpleOp
     }
 
 First, discard all votes that are not maps.  Then consider the set
@@ -487,11 +487,11 @@ Parameters:
     VoteableStructKey = int / tstr
 
     StructJoinOp = {
-        op : "StructJoin",
-        key_rules : {
+        op: "StructJoin",
+        key_rules: {
             * VoteableStructKey => StructItemOp,
         }
-        ? unknown_rule : StructItemOp
+        ? unknown_rule: StructItemOp
     }
 
 To apply a StructJoinOp to a set of votes, first discard every vote that is
@@ -558,9 +558,9 @@ Parameters:
 Encoding
     ; This item is "derived from" some other field.
     DerivedItemOp = {
-        op : "DerivedFrom",
-        fields : [ +SourceField ],
-        rule : SimpleOp
+        op: "DerivedFrom",
+        fields: [ +SourceField ],
+        rule: SimpleOp
     }
 
     ; A field in the vote.
@@ -635,44 +635,44 @@ description of how the vote is to be conducted, or both.
     VoteDocument = [
         ; Each signature may be produced by a different key, if they
         ; are all held by the same authority.
-        sig : [ + SingleSig ],
-        lifetime : Lifespan,
-        digest-alg : DigestAlgorithm,
-        body : bstr .cbor VoteContent
+        sig: [ + SingleSig ],
+        lifetime: Lifespan,
+        digest-alg: DigestAlgorithm,
+        body: bstr .cbor VoteContent
     ]
 
     VoteContent = {
         ; List of supported consensus methods.
-        consensus-methods : [ + uint ],
+        consensus-methods: [ + uint ],
 
         ; Text-based legacy vote to be used if the negotiated
         ; consensus method is too old.  It should itself be signed.
         ; It's encoded as a series of text chunks, to help with
         ; cbor-based binary diffs.
-        ? legacy-vote : [ * tstr ],
+        ? legacy-vote: [ * tstr ],
 
         ; How should the votes within the individual sections be
         ; computed?
-        voting-rules : VotingRules,
+        voting-rules: VotingRules,
 
         ; Information that the authority wants to share about this
         ; vote, which is not itself voted upon.
-        notes : NoteSection,
+        notes: NoteSection,
 
         ; Meta-information that the authorities vote on, which does
         ; not actually appear in the ENDIVE or consensus directory.
-        meta : MetaSection .within VoteableSection,
+        meta: MetaSection .within VoteableSection,
 
         ; Fields that appear in the client network parameter document.
-        client-params : ParamSection .within VoteableSection,
+        client-params: ParamSection .within VoteableSection,
         ; Fields that appear in the server network parameter document.
-        server-params : ParamSection .within VoteableSection,
+        server-params: ParamSection .within VoteableSection,
 
         ; Information about each relay.
-        relays : RelaySection,
+        relays: RelaySection,
 
         ; Information about indices.
-        indices : IndexSection,
+        indices: IndexSection,
 
         * tstr => any
     }
@@ -680,20 +680,20 @@ description of how the vote is to be conducted, or both.
     ; Self-description of a voter.
     VoterSection = {
         ; human-memorable name
-        name : tstr,
+        name: tstr,
 
         ; List of link specifiers to use when uploading to this
         ; authority. (See proposal for dirport link specifier)
-        ? ul : [ *LinkSpecifier ],
+        ? ul: [ *LinkSpecifier ],
 
         ; List of link specifiers to use when downloading from this authority.
-        ? dl : [ *LinkSpecifier ],
+        ? dl: [ *LinkSpecifier ],
 
         ; contact information for this authority.
-        ? contact : tstr,
+        ? contact: tstr,
 
         ; legacy certificate in format given by dir-spec.txt.
-        ? legacy-cert : tstr,
+        ? legacy-cert: tstr,
 
         ; for extensions
         * tstr => any,
@@ -715,7 +715,7 @@ description of how the vote is to be conducted, or both.
     ; The values in an RSAIndex are derived from digests of Ed25519 keys.
     EdIndex = {
         type: "ed-id",
-        alg : DigestAlgorithm,
+        alg: DigestAlgorithm,
         prefix: bstr,
         suffix: bstr
     }
@@ -763,23 +763,23 @@ description of how the vote is to be conducted, or both.
     ; its vote that is not actually voted on.
     NoteSection = {
        ; Information about the voter itself
-       voter : VoterSection,
+       voter: VoterSection,
        ; Information that the voter used when assigning flags.
-       ? flag-thresholds : { tstr => any },
+       ? flag-thresholds: { tstr => any },
        ; Headers from the bandwidth file that the
-       ? bw-file-headers : {tstr => any },
-       ? shared-rand-commit : SRCommit,
+       ? bw-file-headers: {tstr => any },
+       ? shared-rand-commit: SRCommit,
        * VoteableStructKey => VoteableValue,
     }
 
     ; Shared random commitment; fields are as for the current
     ; shared-random-commit fields.
     SRCommit = {
-       ver : uint,
-       alg : DigestAlgorithm,
-       ident : bstr,
-       commit : bstr,
-       ? reveal : bstr
+       ver: uint,
+       alg: DigestAlgorithm,
+       ident: bstr,
+       commit: bstr,
+       ? reveal: bstr
     }
 
     ; the meta-section is voted on, but does not appear in the ENDIVE.
@@ -788,20 +788,20 @@ description of how the vote is to be conducted, or both.
        ; Analagous to the "voting-delay" field in the legacy algorithm.
        voting-delay: [ vote_seconds: uint, dist_seconds: uint ],
        ; Proposed time till next vote.
-       voting-interval : uint,
+       voting-interval: uint,
        ; proposed lifetime for the SNIPs and endives
        snip-lifetime: Lifespan,
        ; proposed lifetime for client params document
-       c-param-lifetime : Lifespan,
+       c-param-lifetime: Lifespan,
        ; proposed lifetime for server params document
-       s-param-lifetime : Lifespan,
+       s-param-lifetime: Lifespan,
        ; signature depth for ENDIVE
-       signature-depth : uint,
+       signature-depth: uint,
        ; digest algorithm to use with endive.
-       signature-digest-alg : DigestAlgorithm,
+       signature-digest-alg: DigestAlgorithm,
        ; Current and previous shared-random values
-       ? cur-shared-rand : [ reveals : uint, rand : bstr ],
-       ? prev-shared-rand : [ reveals : uint, rand : bstr ],
+       ? cur-shared-rand: [ reveals: uint, rand: bstr ],
+       ? prev-shared-rand: [ reveals: uint, rand: bstr ],
        ; extensions.
        * VoteableStructKey => VoteableValue,
     };
@@ -809,11 +809,11 @@ description of how the vote is to be conducted, or both.
     ; A ParamSection will be made into a ParamDoc after voting;
     ; the fields are analogous.
     ParamSection = {
-       ? certs : [ 1*2 bstr .cbor VoterCert ],
-       ? recommend-versions : [ * tstr ],
-       ? require-protos : ProtoVersions,
-       ? recommend-protos : ProtoVersions,
-       ? params : NetParams,
+       ? certs: [ 1*2 bstr .cbor VoterCert ],
+       ? recommend-versions: [ * tstr ],
+       ? require-protos: ProtoVersions,
+       ? recommend-protos: ProtoVersions,
+       ? params: NetParams,
        * VoteableStructKey => VoteableValue,
     }
     RelaySection = {
@@ -823,26 +823,26 @@ description of how the vote is to be conducted, or both.
 
     ; A RelayInfo is a vote about a single relay.
     RelayInfo = {
-       meta : RelayMetaInfo .within VoteableSection,
-       snip : RelaySNIPInfo .within VoteableSection,
-       legacy : RelayLegacyInfo .within VoteableSection,
+       meta: RelayMetaInfo .within VoteableSection,
+       snip: RelaySNIPInfo .within VoteableSection,
+       legacy: RelayLegacyInfo .within VoteableSection,
     }
 
     ; Information about a relay that doesn't go into a SNIP.
     RelayMetaInfo = {
         ; Tuple of published-time and descriptor digest.
-        ? desc : [ uint , bstr ],
+        ? desc: [ uint , bstr ],
         ; What flags are assigned to this relay?  We use a
         ; string->value encoding here so that only the authorities
         ; who have an opinion on the status of a flag for a relay need
         ; to vote yes or no on it.
-        ? flags : { *tstr=>bool },
+        ? flags: { *tstr=>bool },
         ; The relay's self-declared bandwidth.
-        ? bw : uint,
+        ? bw: uint,
         ; The relay's measured bandwidth.
-        ? mbw : uint,
+        ? mbw: uint,
         ; The fingerprint of the relay's RSA identity key.
-        ? rsa-id : RSAIdentityFingerprint
+        ? rsa-id: RSAIdentityFingerprint
     }
     ; SNIP information can just be voted on directly; the formats
     ; are the same.
@@ -853,19 +853,19 @@ description of how the vote is to be conducted, or both.
     RelayLegacyInfo = {
        ; Mapping from consensus version to microdescriptor digests
        ; and microdescriptors.
-       ? mds : [ *Microdesc ],
+       ? mds: [ *Microdesc ],
     }
 
     ; Microdescriptor votes now include the digest AND the
     ; microdescriptor-- see note.
     Microdesc = [
-       low : uint,
-       high : uint,
-       digest : bstr .size 32,
+       low: uint,
+       high: uint,
+       digest: bstr .size 32,
        ; This is encoded in this way so that cbor-based diff tools
        ; can see inside it.  Because of compression and diffs,
        ; including microdesc text verbatim should be comparatively cheap.
-       content : encoded-cbor .cbor [ *tstr ],
+       content: encoded-cbor .cbor [ *tstr ],
     ]
 
     ; ==========
@@ -873,20 +873,20 @@ description of how the vote is to be conducted, or both.
     ; The VotingRules field explains how to vote on the members of
     ; each section
     VotingRules = {
-        meta : SectionRules,
-        params : SectionRules,
-        relay : RelayRules,
-        indices : SectionRules,
+        meta: SectionRules,
+        params: SectionRules,
+        relay: RelayRules,
+        indices: SectionRules,
     }
 
     ; The RelayRules object explains the rules that apply to each
     ; part of a RelayInfo.  A key will appear in the consensus if it
     ; has been listed by at least key_min_count authorities.
     RelayRules = {
-        key_min_count : IntOpArgument,
-        meta : SectionRules,
-        snip : SectionRules,
-        legacy : SectionRules,
+        key_min_count: IntOpArgument,
+        meta: SectionRules,
+        snip: SectionRules,
+        legacy: SectionRules,
     }
 
 <!-- Section 3.5 --> <a id='S3.5'></a>

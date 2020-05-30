@@ -35,51 +35,51 @@ VoteDocuments.
                    type:["uint","bstr"] },
             flags: {op:"MapJoin", key_type:"tstr",
                     item_op:{op:"Mode",type:"bool"}},
-            bw : {op:"Median", type:"uint" },
+            bw: {op:"Median", type:"uint" },
             mbw :{op:"Median", type:"uint" },
-            rsa-id : {op:"Mode", type:"bstr"},
+            rsa-id: {op:"Mode", type:"bstr"},
         },
         snip: {
            ; ed25519 key is handled as any other value.
-           0 : { op:"DerivedFrom", fields:[["RM","desc"]],
+           0: { op:"DerivedFrom", fields:[["RM","desc"]],
                  rule:{op:"Mode",type="bstr"} },
 
            ; ntor onion key.
-           1 : { op:"DerivedFrom", fields:[["RM","desc"]],
+           1: { op:"DerivedFrom", fields:[["RM","desc"]],
                  rule:{op:"Mode",type="bstr"} },
 
            ; link specifiers.
-           2 : { op: "CborDerived",
+           2: { op: "CborDerived",
                  item-op: { op:"DerivedFrom", fields:[["RM","desc"]],
                             rule:{op:"Mode",type="bstr" } } },
 
            ; software description.
-           3 : { op:"DerivedFrom", fields:[["RM","desc"]],
+           3: { op:"DerivedFrom", fields:[["RM","desc"]],
                  rule:{op:"Mode",type=["tuple", "tstr", "tstr"] } },
 
            ; protovers.
-           4 : { op: "CborDerived",
+           4: { op: "CborDerived",
                  item-op: { op:"DerivedFrom", fields:[["RM","desc"]],
                           rule:{op:"Mode",type="bstr" } } },
 
            ; families.
-           5 : { op:"SetJoin", min_count:"qfield", type:"bstr" },
+           5: { op:"SetJoin", min_count:"qfield", type:"bstr" },
 
            ; countrycode
-           6 : { op:"Mode", type="tstr" } ,
+           6: { op:"Mode", type="tstr" } ,
 
            ; 7: exitpolicy.
-           7 : { op: "CborDerived",
+           7: { op: "CborDerived",
                  item-op: { op: "DerivedFrom", fields:[["RM","desc"],["CP","port-classes"]],
                           rule:{op:"Mode",type="bstr" } } },
         },
-        legacy : {
-          "sha1-desc" : { op:"DerivedFrom",
+        legacy: {
+          "sha1-desc": { op:"DerivedFrom",
                           fields:[["RM","desc"]],
                           rule:{op:"Mode",type="bstr"} },
-          "mds" : { op:"DerivedFrom",
+          "mds": { op:"DerivedFrom",
                     fields:[["RM":"desc"]],
-                    rule : { op:"ThresholdOp", min_count: "qauth",
+                    rule: { op:"ThresholdOp", min_count: "qauth",
                              multi_low:false,
                              type:["tuple", "uint", "uint",
                                    "bstr", "bstr" ] }},

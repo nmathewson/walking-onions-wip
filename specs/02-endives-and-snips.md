@@ -282,7 +282,7 @@ can't interfere with each other.
     ]
 
 (Computing the signature over a concatenation of objects is safe, since
-the objects' content is self-describing CBOR, and isn't vulerable to
+the objects' content is self-describing CBOR, and isn't vulnerable to
 framing issues.)
 
 <!-- Section 2.2.1 --> <a id='S2.2.1'></a>

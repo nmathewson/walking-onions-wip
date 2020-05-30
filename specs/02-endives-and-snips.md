@@ -110,9 +110,9 @@ optional nonce.
 
 All the signed CBOR data used in this format is represented as a
 binary string, so that CBOR-processing tools are less likely to
-re-encode or transform it.  We use the CDDL production `bstr .cbor
-Object` to represent a binary string that must hold a valid encoding
-of a CBOR object whose type is `Object`.
+re-encode or transform it.   We denote this below with the CDDL syntax
+`bstr .cbor Object`, which means "a binary string that must hold a valid
+encoding of a CBOR object whose type is `Object`".
 
 <!-- Section 2.1.4 --> <a id='S2.1.4'></a>
 

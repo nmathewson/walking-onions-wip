@@ -9,7 +9,7 @@ download diffs rather than entire ENDIVEs.  The ENDIVE format makes
 several choices in order to make these diffs small: the Merkle tree
 is omitted, and routing indices are not included directly.
 
-To address those issues, this document describe the steps that a
+To address those issues, this document describes the steps that a
 relay needs to perform, upon receiving an ENDIVE document, to derive
 all the SNIPs for that ENDIVE.
 
@@ -59,7 +59,7 @@ authorities MUST NOT generate any ENDIVEs that violate them.  If a
 relay encounters an ENDIVE that cannot be verified, then the ENDIVE
 cannot be expanded.
 
-> NOTE: conceivably there should there be some way to define an index as a
+> NOTE: conceivably should there be some way to define an index as a
 > subset of another index, with elements weighted in different ways?  In
 > other words, "Index a is index b, except multiply these relays by 0 and
 > these relays by 1.2".  We can keep this idea sitting around in case there
@@ -90,7 +90,7 @@ directly in the IndexSpec.
 
         Set previous_pos to pos2.
 
-    Verify that previous_pos = the prececessor of indexspec.first_index.
+    Verify that previous_pos = the predecessor of indexspec.first_index.
 
     Return result_idx.
 
@@ -98,7 +98,7 @@ directly in the IndexSpec.
 
 ### Raw numeric indices
 
-If the IndexType is Indextype_RawNumreic, it is describe by a set of
+If the IndexType is Indextype_RawNumeric, it is described by a set of
 spans on a 32-bit index range.
 
     Algorithm: Expanding a RawNumeric index.
@@ -126,7 +126,7 @@ spans on a 32-bit index range.
 ### Weighted indices
 
 If the IndexSpec type is Indextype_Weighted, then the index is
-described by assigning a probability weights each of a number of relays.
+described by assigning a probability weight to each of a number of relays.
 From these, we compute a series of 32-bit index positions.
 
 This algorithm uses 64-bit math, and 64-by-32-bit integer division.
@@ -261,12 +261,12 @@ derivatives.
 
 ### Building a SNIPLocation
 
-After computing all the indices in an IndexGroups, relays combine
+After computing all the indices in an IndexGroup, relays combine
 them into a series of SNIPLocation objects. Each SNIPLocation
 MUST contain all the IndexId => IndexRange entries that point to a
 given ENDIVERouterData, for the IndexIds listed in an IndexGroup.
 
-    Algorithm: Build a list of SNIPLocation from a set of routing indices.
+    Algorithm: Build a list of SNIPLocation objects from a set of routing indices.
 
     Initialize R as [ { } ] * LEN(relays)   (A list of empty maps)
 
@@ -297,7 +297,7 @@ An index group can include an `omit_from_snips` field to indicate that
 certain fields from a SNIPRouterData should not be included in the
 SNIPs for that index group.
 
-Since a SNIPRouterData needs to be signed, this process has to be be
+Since a SNIPRouterData needs to be signed, this process has to be
 deterministic.  Thus, the truncated SNIPRouterData should be computed by
 removing the keys and values for EXACTLY the keys listed and no more.  The
 remaining keys MUST be left in the same order that they appeared in the
@@ -334,7 +334,7 @@ list, where IDX is a D-bit bitstring.  LEAF(IDX) is either a byte string
 or nil.
 
 The relay then recursively computes the hashes in the Merkle tree as
-follows.  (Recall from that `H_node()` and `H_leaf()` are hashes taking
+follows.  (Recall that `H_node()` and `H_leaf()` are hashes taking
 a bit-string PATH, a LIFESPAN and NONCE from the signature information,
 and a variable-length string ITEM.)
 
@@ -365,8 +365,8 @@ whose children are "nil".  The "nil" entries only exist to place all
 leaves at a constant depth, and to enable spacing out different sections
 of the tree.
 
-If `siganture-depth` from the ENDIVE is N, the relay does not need to
-compute any merkle tree entries for PATHs of length shorter than N bits.
+If `signature-depth` for the ENDIVE is N, the relay does not need to
+compute any Merkle tree entries for PATHs of length shorter than N bits.
 
 <!-- Section 4.4 --> <a id='S4.4'></a>
 
@@ -387,7 +387,7 @@ point, the relay builds them into SNIPs, using the `sig_params` and
     Let Sig = signatures[SIG_IDX] -- either the SingleSig or the MultiSig
     for this snip.
 
-    Let HashPath = []   (an emtpy list).
+    Let HashPath = []   (an empty list).
     For bitlen = signature-depth+1 ... tree-depth-1:
         Let X = PATH, truncated to bitlen bits.
         Invert the final bit of PATH.

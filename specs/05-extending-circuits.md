@@ -28,7 +28,7 @@ We add new fields to the CREATE2 cell so that relays can send each
 other more information without interfering with the client's part of
 the handshake.
 
-The CREATE2, CREATED2, and EXTENDED2 cells changes as follows:
+The CREATE2, CREATED2, and EXTENDED2 cells change as follows:
 
       struct create2_body {
          // old fields
@@ -142,7 +142,7 @@ it had gotten the correct SNIP.)
 
 ## Modified ntor handshake
 
-We adapt the ntor handsake from tor-spec.txt for this use, with the
+We adapt the ntor handshake from tor-spec.txt for this use, with the
 following main changes.
 
   * The NODEID and KEYID fields are omitted from the input.

@@ -3,11 +3,11 @@
 
 # Client behavior with walking onions
 
-Today's Tor clients have several behaviors that become more somewhat
+Today's Tor clients have several behaviors that become somewhat
 more difficult to implement with Walking Onions.  Some of these
 behaviors are essential and achievable.  Others can be achieved with
 some effort, and still others appear to be incompatible with the
-wWlking Onions design.
+Walking Onions design.
 
 <!-- Section 6.1 --> <a id='S6.1'></a>
 
@@ -45,7 +45,7 @@ it does so, it SHOULD discard all but one guard retrieved from each set.
 
 After choosing guards, clients will continue to use them even after
 their SNIPs expire.  On the first circuit through each guard after
-opening a channel, clients should ask that guards for a fresh SNIP for
+opening a channel, clients should ask that guard for a fresh SNIP for
 itself, to ensure that the guard is still listed in the consensus, and
 to keep the client's information up-to-date.
 
@@ -76,7 +76,7 @@ index.  The bridge responds with a self-created unsigned SNIP:
         router : bstr .cbor SNIPRouterData,
      ]
 
-*Security note*: Clients MUST take care to keep  UnsignedSNIPs separated
+*Security note*: Clients MUST take care to keep UnsignedSNIPs separated
 from signed ones. These are not part of any ENDIVE, and so should not be
 used for any purpose other than connecting through the bridge that the
 client has received them from.  They should be kept associated with that
@@ -105,7 +105,7 @@ Delegated Verifiable Selection.  As described in the Walking Onions
 paper, DVS allows a relay that doesn't support the requested port to
 instead send the client the SNIP of a relay that does.  (In the paper,
 the relay uses a digest of previous messages to decide which routing
-index to use: Instead, we have the client send an index field.)
+index to use. Instead, we have the client send an index field.)
 
 This requires changes to the BEGIN and END cell formats.  After the
 "flags" field in BEGIN cells, we add an extension mechanism:
@@ -120,9 +120,9 @@ This requires changes to the BEGIN and END cell formats.  After the
 We allow the `snip_index_pos` link specifier type to appear as a begin
 extension.
 
-END cells will need to have a new format that supports.  This format is
-enabled whenever a new `EXTENDED_END_CELL` flag appears in the begin
-cell.
+END cells will need to have a new format that supports including policy and
+SNIP information.  This format is enabled whenever a new `EXTENDED_END_CELL`
+flag appears in the begin cell.
 
     struct end_cell {
         u8 tag IN [ 0xff ]; // indicate that this isn't an old-style end cell.
@@ -152,7 +152,7 @@ One new END cell extension is used for delegated verifiable selection:
 
 This design may require END cells to become wider; see
 319-wide-everything.md for an example proposal to
-supersede propose 249 and allow more wide cell types.
+supersede proposal 249 and allow more wide cell types.
 
 <!-- Section 6.4 --> <a id='S6.4'></a>
 
@@ -165,18 +165,18 @@ when Exit bandwidth is scarce") are captured by the index system. Some
 other restrictions are not.  Here we describe how to implement those.
 
 The general approach taken here is "build and discard".  Since most
-possible paths will not violate these universal restrictions, we accept
-that a fraction of the paths built will not be usable.  Clients tear
-them down a short time after they are built.
+possible paths will not violate these universal restrictions, we
+accept that a fraction of the paths built will not be usable.
+Clients tear them down a short time after they are built.
 
-Clients SHOULD discard a circuit if, after it has been built, they find
-that it contains the same relay twice, or it contains more than one
-relay from the same family or from the same subnet.
+Clients SHOULD discard a circuit if, after it has been built, they
+find that it contains the same relay twice, or it contains more than
+one relay from the same family or from the same subnet.
 
-Clients MAY remember the SNIPs they have received, and for some the
-time that the SNIP is maximally recent, not choose any index
-position corresponding to a SNIP that would violate a path
-restriction.
+Clients MAY remember the SNIPs they have received, and use those
+SNIPs to avoid index ranges that they would automatically reject.
+Clients SHOULD NOT store any SNIP for longer than it is maximally
+recent.
 
 > NOTE: We should continue to monitor the fraction of paths that are
 > rejected in this way.  If it grows too high, we either need to amend

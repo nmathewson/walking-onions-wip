@@ -10,14 +10,14 @@ CBOR-based, a text-based voting protocol is no longer appropriate
 for generating it.
 
 We cannot immediately abandon the text-based consensus and
-microdescriptor formats, however, but instead will need to keep
-generating them for legacy relays and clients.  Ideally, the legacy
-consensus should become a byproduct of the same voting process as is
-used to produce ENDIVEs, to limit the amount of divergence in
-contents.
+microdescriptor formats, but instead will need to keep
+generating them for legacy relays and clients.  Ideally, process
+that produces the ENDIVE should also produce a legacy consensus,
+to limit the amount of divergence in their contents.
 
 Further, it would be good for the purposes of this proposal if we
-can "inherit" as our existing voting mechanism for legacy purposes.
+can "inherit" as much as possible of our existing voting mechanism
+for legacy purposes.
 
 This section of the proposal will try to solve these goals by defining a
 new binary-based voting format, a new set of voting rules for it, and a
@@ -34,7 +34,7 @@ this proposal.
 
 Notably, we are not changing how the voting schedule works.  Nor are
 we changing the property that all authorities must agree on the list
-of authorities; the property that that a consensus is computed as a
+of authorities; the property that a consensus is computed as a
 deterministic function of a set of votes; or the property that if
 authorities believe in different sets of votes, they will not reach
 the same consensus.
@@ -58,7 +58,7 @@ consensus computation are:
     compression should make the bandwidth impact of this addition
     negligible.)
 
-For computing ENDIVEs, the principle changes in voting are:
+For computing ENDIVEs, the principal changes in voting are:
 
   * The consensus outputs for most voteable objects are specified in a
     way that does not require the authorities to understand their
@@ -74,11 +74,11 @@ resource "/tor/auth-vote-opts".  This resource is a text document
 containing a list of HTTP-style headers. Recognized headers are
 described below; unrecognized headers MUST be ignored.
 
-The *Accept-Encoding* header follows the same as the HTTP header of
-the same name; it indicates a list of Content-Encodings that the
-authority will accept for uploads.  All authorities SHOULD support
-the gzip and identity encodings.  The identity encoding is mandatory.
-(Default: "identity")
+The *Accept-Encoding* header follows the same format as the HTTP
+header of the same name; it indicates a list of Content-Encodings
+that the authority will accept for uploads.  All authorities SHOULD
+support the gzip and identity encodings.  The identity encoding is
+mandatory.  (Default: "identity")
 
 The *Accept-Vote-Diffs-From* header is a list of digests of previous
 votes held by this authority; any new uploaded votes that are given
@@ -92,7 +92,7 @@ format described here). Unrecognized vote formats MUST be ignored.
 (Default: "legacy-3".)
 
 If requesting "/tor/auth-vote-opts" gives an error, or if one or
-more headers missing, the default values SHOULD be used.  These
+more headers are missing, the default values SHOULD be used.  These
 documents (or their absence) MAY be cached for up to 2 voting
 periods.)
 
@@ -244,7 +244,7 @@ consensus".  It is encoded as:
     ; "Don't produce a consensus".
     NoneOp = { op: "None" }
 
-When encounting an unrecognized or nonconforming voting operation,
+When encountering an unrecognized or nonconforming voting operation,
 _or one which is not recognized by the consensus-method in use_, the
 authorities proceed as if the operation had been "None".
 
@@ -322,7 +322,7 @@ return "no consensus".
 
 If there is a single value that has received the most votes, return
 it. Break ties in favor of lower values if `BREAK_TIES_LOW` is true,
-and in favor of higher values of `BREAK_TIES_LOW` is false.
+and in favor of higher values if `BREAK_TIES_LOW` is false.
 (Perform comparisons in canonical cbor order.)
 
 <!-- Section 3.3.4.3 --> <a id='S3.3.4.3'></a>
@@ -514,7 +514,7 @@ This operation always reaches a consensus, even if it is an empty map.
 
 A CborData operation wraps another operation, and tells the authorities
 that after the operation is completed, its result should be decoded as a
-CBOR bytestring.
+CBOR bytestring and interpolated directly into the document.
 
 Parameters: `ITEM_OP` (Any SingleOp that can take a bstr input.)
 
@@ -566,7 +566,7 @@ Encoding
     ; A field in the vote.
     SourceField = [ FieldSource, VoteableStructKey ]
 
-    ; A location in the vote.  Each location here can only occur
+    ; A location in the vote.  Each location here can only
     ; be referenced from later locations, or from itself.
     FieldSource = "M" ; Meta.
                / "CP" ; ClientParam.
@@ -614,7 +614,7 @@ tagged with an "op":
     SectionItemOp = StructJoinOp / StructItemOp
 
 To merge a set of SectionRules together, proceed as follows. For each
-key, consider whether at least QUORUM_AUTH authorities have voted voted the
+key, consider whether at least QUORUM_AUTH authorities have voted the
 same StructItemOp for that key.  If so, that StructItemOp is the
 resulting operation for this key.  Otherwise, there is no entry for this key.
 
@@ -766,7 +766,8 @@ description of how the vote is to be conducted, or both.
        voter: VoterSection,
        ; Information that the voter used when assigning flags.
        ? flag-thresholds: { tstr => any },
-       ; Headers from the bandwidth file that the
+       ; Headers from the bandwidth file to be reported as part of
+       ; the vote.
        ? bw-file-headers: {tstr => any },
        ? shared-rand-commit: SRCommit,
        * VoteableStructKey => VoteableValue,
@@ -789,7 +790,7 @@ description of how the vote is to be conducted, or both.
        voting-delay: [ vote_seconds: uint, dist_seconds: uint ],
        ; Proposed time till next vote.
        voting-interval: uint,
-       ; proposed lifetime for the SNIPs and endives
+       ; proposed lifetime for the SNIPs and ENDIVEs
        snip-lifetime: Lifespan,
        ; proposed lifetime for client params document
        c-param-lifetime: Lifespan,
@@ -797,7 +798,7 @@ description of how the vote is to be conducted, or both.
        s-param-lifetime: Lifespan,
        ; signature depth for ENDIVE
        signature-depth: uint,
-       ; digest algorithm to use with endive.
+       ; digest algorithm to use with ENDIVE.
        signature-digest-alg: DigestAlgorithm,
        ; Current and previous shared-random values
        ? cur-shared-rand: [ reveals: uint, rand: bstr ],
@@ -909,7 +910,7 @@ recently.
 > I'm not sure whether this helps reliability more or less than it risks it,
 > but it worth investigating.
 
-Next, the authorites determine the consensus method as they do today,
+Next, the authorities determine the consensus method as they do today,
 using the field "consensus-method".  This can also be expressed as
 the voting operation `Threshold[SUPERQUORUM_PRESENT, false, uint]`.
 
@@ -939,7 +940,7 @@ which is done slightly differently, according to the rules of
 RelayRules element of VotingRules.
 
 Finally, the authorities transform the resulting sections into an
-ENDIVE and a legacy consensus, as in "Computing an Endive" and
+ENDIVE and a legacy consensus, as in "Computing an ENDIVE" and
 "Computing a legacy consensus" below.
 
 To vote on a single VotingSection, find the corresponding
@@ -1008,10 +1009,10 @@ according to fields in the meta section.  See "Constructing Indices" below.
 
 ### Constructing indices
 
-After having build the list of relays, the authorities construct and
-encode the indices that appear in the endives.  The voted-upon
+After having built the list of relays, the authorities construct and
+encode the indices that appear in the ENDIVEs.  The voted-upon
 GenericIndexRule values in the IndexSection of the consensus say how
-to build the indices in the endive, as follows.
+to build the indices in the ENDIVE, as follows.
 
 An `EdIndex` is built using the IndexType_Ed25519Id value, with the
 provided prefix and suffix values.  Authorities don't need to expand
@@ -1022,7 +1023,7 @@ An `RSAIndex` is built using the IndexType_RSAId type.  Authorities
 don't need to expand this index in the ENDIVE, since the relays can
 compute it deterministically.
 
-A `BwIndex` is built using the IndexType_Weighted type. Each relay a
+A `BwIndex` is built using the IndexType_Weighted type. Each relay has a
 weight equal to some specified bandwidth field in its consensus
 RelayInfo.  If a relay is missing any of the `required_flags` in
 its meta section, or if it does not have the specified bandwidth
@@ -1050,7 +1051,7 @@ group; index groups are ordered numerically.
 
 ## Computing a legacy consensus.
 
-When using a consensus method that Supports Walking Onions, the
+When using a consensus method that supports Walking Onions, the
 legacy consensus is computed from the same data as the ENDIVE.
 Because the legacy consensus format will be frozen once Walking
 Onions is finalized, we specify this transformation directly, rather

@@ -3,7 +3,7 @@
 
 # Introduction: A Specification for Walking Onions
 
-In Proposal 300, I introduced Walking Onions, a design for scaling the
+In Proposal 300, I introduced Walking Onions, a design for scaling
 Tor and simplifying clients, by removing the requirement that every
 client know about every relay on the network.
 
@@ -18,13 +18,13 @@ proposal will be structured.
 ## Remind me about Walking Onions again?
 
 With Tor's current design, every client downloads and refreshes a
-set of directory documents that describe the authorities' views
-about every single relay on the Tor network.  This requiment makes
-clients' impact on the network grow quadratically, since the
-directory grows linearly with number of relays, and it is downloaded
-a number of times that grows linearly with the number of clients.
-Additionally, low-bandwidth clients and bootstrapping clients spend
-a disproportionate amount of their bandwidth loading
+set of directory documents that describe the directory authorities'
+views about every single relay on the Tor network.  This requirement
+makes directory bandwidth usage grow quadratically, since the
+directory size grows linearly with the number of relays, and it is
+downloaded a number of times that grows linearly with the number of
+clients.  Additionally, low-bandwidth clients and bootstrapping
+clients spend a disproportionate amount of their bandwidth loading
 directory information.
 
 With these drawbacks, why does Tor still require clients to
@@ -36,7 +36,7 @@ different subset of relays.
 Walking Onions is a design that resists these attacks without
 requiring clients ever to have a complete view of the network.
 
-You can think of Walking Onions design like this: Imagine that with
+You can think of the Walking Onions design like this: Imagine that with
 the current Tor design, the client covers a wall with little pieces
 of paper, each representing a relay, and then throws a dart at the wall
 to pick a relay.  Low-bandwidth relays get small pieces of paper;
@@ -79,7 +79,7 @@ by Komlo, Mathewson, and Goldberg.
 This proposal is unusually long, since Walking Onions touches on many
 aspects of Tor's functionality.  It requires changes to voting,
 directory formats, directory operations, circuit building, path
-selection, client operations, and more.  These changes are described
+selection, client operations, and more.  These changes are described in the
 sections listed below.
 
 Here in section 1, we briefly reintroduce Walking Onions, and talk
@@ -105,7 +105,7 @@ Onions.
 
 Section 8 describes small alterations in client and relay behavior
 to strengthen clients against some kinds of attacks based on relays
-picking among multiple ENDIVEs, while still making voting
+picking among multiple ENDIVEs, while still making the voting
 system robust against transient authority failures.
 
 Section 9 closes with a discussion of how to migrate from the
@@ -148,7 +148,7 @@ Appendix Z closes with acknowledgments.
 ### Related proposals
 
 The following proposals are not part of the Walking Onions proposal,
-but they are written at the same time, are either helpful or
+but they were written at the same time, and are either helpful or
 necessary for its implementation.
 
 318-limit-protovers.md restricts the allowed version numbers for

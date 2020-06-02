@@ -46,18 +46,19 @@ avoid a side-channel, we want CREATED cells to all be the same
 size, which means we need to pad up to the largest size possible
 for a SNIP.)
 
-We want to place as few requirements on clients as possible, and we want to
-preserve forward compatibility.
+We want to place as few requirements on clients as possible, and we
+want to preserve forward compatibility.
 
-We want ENDIVEs to be compressible, and small. We want them to benefit from
-diffs.
+We want ENDIVEs to be compressible, and small. We want successive
+ENDIVEs to be textually similar, so that we can use diffs to
+transmit only the parts that change.
 
-We should preserve (and loosen) our policy of requiring only loose
-time synchronization between clients and relays.  Where possible,
-we'll make the permitted skew explicit in the protocol: for example,
-rather than saying "you can accept a document 10 minutes before it
-is valid", we will just make the validity interval start 10 minutes
-earlier.
+We should preserve our policy of requiring only loose time
+synchronization between clients and relays, and allow even looser
+synchronization when possible.  Where possible, we'll make the
+permitted skew explicit in the protocol: for example, rather than
+saying "you can accept a document 10 minutes before it is valid", we
+will just make the validity interval start 10 minutes earlier.
 
 <!-- Section 2.1.2 --> <a id='S2.1.2'></a>
 
@@ -163,8 +164,8 @@ different paths, and "" is a valid path, indicating the root of the tree.
 
 We assume two hash functions here: `H_leaf()` to be used with leaf
 items, and `H_node()` to be used with intermediate nodes.  These functions
-are parameterized with a path through the tree, with a nonce, and with
-the lifespan of the object to be signed.
+are parameterized with a path through the tree, with
+the lifespan of the object to be signed, and with a nonce.
 
 To validate the authentication on a SNIP, the client proceeds as follows:
 
@@ -231,7 +232,7 @@ ENDIVE.
 Relays will download this ENDIVE (either directly or as a diff),
 validate it, and extract SNIPs from it.  Extracting these SNIPs may be
 trivial (if they are signed individually), or more complex (if they are
-signed via a merkle tree, and the merkle tree needs to be
+signed via a Merkle tree, and the Merkle tree needs to be
 reconstructed).  This complexity is acceptable only to the extent that
 it reduces compressed diff size.
 
@@ -257,7 +258,7 @@ Those come later. (See sections 03 and 04 respectively.)
 ## SNIPs
 
 Each SNIP has three pieces: the part of the SNIP that describes the
-router, the part of that describes the SNIPs place within an ENDIVE, and
+router, the part of that describes the SNIP's place within an ENDIVE, and
 the part that authenticates the whole SNIP.
 
 Why two _separate_ authenticated pieces?  Because one (the router
@@ -291,7 +292,7 @@ framing issues.)
 
 Here we talk about the type that tells a client about a single
 router.  For cases where we are just storing information about a
-router (for example, when using it as a guard) we can remember
+router (for example, when using it as a guard), we can remember
 this part, and discard the other pieces.
 
 The only required parts here are those that identify the router
@@ -312,7 +313,7 @@ obsolete fields, including RSA identity fingerprint, TAP key,
 published time, etc.
 
     ; A SNIPRouterData is a map from integer keys to values for
-    ; those key.
+    ; those keys.
     SNIPRouterData = {
         ; identity key.
         ? 0 => Ed25519PublicKey,
@@ -343,7 +344,7 @@ published time, etc.
         ? 7 => ExitPolicy,
 
         ; NOTE: Properly speaking, there should be a CDDL 'cut'
-        ; here, to indicate that the rules below sould only match
+        ; here, to indicate that the rules below should only match
         ; if one if the previous rules hasn't matched.
         ; Unfortunately, my CDDL tool doesn't seem to support cuts.
 
@@ -361,7 +362,7 @@ published time, etc.
     ; Tor proposal 242).
     ;
     ; A client should consider two routers to be in the same
-    ; family if they have at last one FamilyId in common.
+    ; family if they have at least one FamilyId in common.
     ; Authorities will canonicalize these lists.
     FamilyId = bstr
 
@@ -436,8 +437,8 @@ the relay.
     ; SNIPLocation: we're using a map here because it's natural
     ; to look up indices in maps.
     SNIPLocation = {
-        ; The keys of this mapping represents the routing indices in
-        ; which a SNIP appears.  The values represents the index ranges
+        ; The keys of this mapping represent the routing indices in
+        ; which a SNIP appears.  The values represent the index ranges
         ; that it occupies in those indices.
         * IndexId => IndexRange / ExtensionIndex,
     }
@@ -520,7 +521,7 @@ validated as described in "Design overview: Authentication" above.
         ; than one with an earlier `published` time.
         ;
         ; Seeing a publication time "in the future" on a correctly
-        ; authenticated documented is a reliable sign that your
+        ; authenticated document is a reliable sign that your
         ; clock is set too far in the past.
         published: uint,
 
@@ -591,9 +592,9 @@ for the full algorithm, see section 04.
 
     ; ENDIVEs are also sent as CBOR.
     ENDIVE = [
-        ; Signature for the ENDIVE, using a simpler format than for the
+        ; Signature for the ENDIVE, using a simpler format than for 
         ; a SNIP.  Since ENDIVEs are more like a consensus, we don't need
-        ; to use threshold signatures or merkle paths here.
+        ; to use threshold signatures or Merkle paths here.
         sig: ENDIVESignature,
 
         ; Contents, as a binary string.
@@ -621,7 +622,7 @@ for the full algorithm, see section 04.
         snip_sigs: DetachedSNIPSignatures,
 
         ; Signatures across the ParamDoc pieces.  Note that as with the
-        ; DetachedSNIPSignatures, these signature are not themselves signed.
+        ; DetachedSNIPSignatures, these signatures are not themselves signed.
         param_doc: ParamDocSignature,
 
         ; extensions for later use. These are not signed.
@@ -643,7 +644,7 @@ for the full algorithm, see section 04.
             ; Nonce to be used with the signing algorithm for the signatures.
             ? signature-nonce: bstr,
 
-            ; At what depth of a Merkle tree to the signatures apply?
+            ; At what depth of a Merkle tree do the signatures apply?
             ; (If this value is 0, then only the root of the tree is signed.
             ; If this value is >= ceil(log2(n_leaves)), then every leaf is
             ; signed.).
@@ -711,7 +712,7 @@ for the full algorithm, see section 04.
     Indextype_Ed25519Id = 3
     Indextype_RawNumeric = 4
 
-    ; An indexspec may given as a raw set of index ranges.  This is a
+    ; An indexspec may be given as a raw set of index ranges.  This is a
     ; fallback for cases where we simply can't construct an index any other
     ; way.
     IndexSpec_Raw = {
@@ -723,8 +724,7 @@ for the full algorithm, see section 04.
         index_ranges: [ * [ uint, IndexPos ] ],
     }
 
-    ; An indexspec where we're placing routers from the list of
-    ; ENDIVERouterData index, and by their numeric spans on the index.
+    ; An indexspec given as a list of numeric spans on the index.
     IndexSpec_RawNumeric = {
         type: Indextype_RawNumeric,
         first_index_pos: uint,
@@ -750,7 +750,7 @@ for the full algorithm, see section 04.
         index_weights: [ * uint32 ],
     }
 
-    ; This index is computed from the RSA identity keys digests of all of the
+    ; This index is computed from the RSA identity key digests of all of the
     ; SNIPs. It is used in the HSv2 directory ring.
     IndexSpec_RSAId = {
         type: Indextype_RSAId,
@@ -836,7 +836,7 @@ recommended versions, authority certificates, and so on.
        ; very long.
        LifespanInfo,
 
-       ; how are c_digest and s_digest the digest computed?
+       ; how are c_digest and s_digest computed?
        d_alg: DigestAlgorithm,
        ; Digest over the cbody field
        c_digest: bstr,
@@ -848,7 +848,7 @@ recommended versions, authority certificates, and so on.
        params: NetParams,
        ; List of certificates for all the voters.  These
        ; authenticate the keys used to sign SNIPs and ENDIVEs and votes,
-       ; using the authorities longest-term identity keys.
+       ; using the authorities' longest-term identity keys.
        voters: [ + bstr .cbor VoterCert ],
 
        ; A division of exit ports into "classes" of ports.

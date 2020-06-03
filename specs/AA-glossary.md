@@ -16,7 +16,7 @@ authorities.
 
 *ENDIVE* -- An "Efficient Network Directory with Individually Verifiable
 Entries".  An ENDIVE is a collection of SNIPS downloaded by relays,
-authenticated with the directory authorities.
+authenticated by the directory authorities.
 
 *Routing index* -- A routing index is a map from binary strings to relays,
 with some given property.  Each relay that is in the routing index is

@@ -16,7 +16,7 @@ From section 5:
 * `extend-pad-len` -- Clients SHOULD pad their EXTEND cell bodies to this
   size.
 
-* `extended-pad-len` -- Relays SHOULD pad their EXTEND cell bodies to this
+* `extended-pad-len` -- Relays SHOULD pad their EXTENDED cell bodies to this
 size.
 
 From section 7:

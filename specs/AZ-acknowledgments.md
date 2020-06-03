@@ -14,7 +14,7 @@ Thanks to David Goulet, Teor, and George Kadianakis for commentary on
 earlier versions of proposal 300.
 
 Thanks to Chelsea Komlo and Ian Goldberg for their help fleshing out
-so many ideas related to walking onions in their work on the design
+so many ideas related to Walking Onions in their work on the design
 paper.
 
 Thanks to Teor for improvements to diff format, ideas about grouping

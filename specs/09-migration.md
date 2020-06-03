@@ -24,30 +24,30 @@ should be deployed on the network.
    relay versions are public, so this doesn't leak.)
 
 4. In parallel with relay support, Tor should also add client
-   support for walking onions.  This should be disabled by default,
+   support for Walking Onions.  This should be disabled by default,
    however, since it will only be usable with the subset of relays
    that support Walking Onions, and since it would make clients
    distinguishable.
 
 5. Once enough of the relays (possibly, all) support Walking Onions,
    the client support can be turned on.  They will not be able to
-   use old relays that do not support walking onions.
+   use old relays that do not support Walking Onions.
 
-6. Eventually, relays that do not support walking onions should not
+6. Eventually, relays that do not support Walking Onions should not
    be listed in the consensus.
 
-Client support for walking onions should be enabled or disabled, at
+Client support for Walking Onions should be enabled or disabled, at
 first, with a configuration option.  Once it seems stable, the
 option should have an "auto" setting that looks at a network
 parameter. This parameter should NOT be a simple "on" or "off",
 however: it should be the minimum client version whose support for
-walking onions is believed to be correct.
+Walking Onions is believed to be correct.
 
 <!-- Section 9.1 --> <a id='S9.1'></a>
 
 ## Future work: migrating away from sedentary onions
 
-Once all clients are using walking onions, we can take a pass
+Once all clients are using Walking Onions, we can take a pass
 through the Tor specifications and source code to remove
 no-longer-needed code.
 
@@ -56,8 +56,8 @@ since nobody but the clients depends on the clients having them.
 Only after obsolete clients represent a very small fraction of the
 network should relay or authority support be disabled.
 
-Some fields in router descriptors become obsolete with walking
-onions, and possibly router descriptors themselves should be
-replaced with cbor objects of some kind.  This can only
+Some fields in router descriptors become obsolete with Walking
+Onions, and possibly router descriptors themselves should be
+replaced with cbor objects of some kind.  This can only happen,
 however, after no descriptor users remain.
 

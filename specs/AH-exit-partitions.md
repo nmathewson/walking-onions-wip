@@ -3,7 +3,7 @@
 
 ## Appendix H: Choosing good clusters of exit policies
 
-With walking onions, we cannot easily support all the port
+With Walking Onions, we cannot easily support all the port
 combinations [*] that we currently allow in the "policy summaries"
 that we support in microdescriptors.
 

@@ -12,7 +12,7 @@ such an ordering as follows:
   * arrays are sorted lexicographically by elements.
   * Tagged items are sorted as if they were not tagged.
   * Maps do not have any sorting order.
-  * False proceeds true.
+  * False precedes true.
   * Otherwise, the ordering between two items is not defined.
 
 More specifically:

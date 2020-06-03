@@ -8,7 +8,7 @@ since multiple ENDIVEs are valid at the same time, a malicious relay
 might choose any of several possible SNIPs in response to a client's
 routing index value.
 
-Here we discuss several ways to mitigate this kind attack.
+Here we discuss several ways to mitigate this kind of attack.
 
 <!-- Section 8.1 --> <a id='S8.1'></a>
 
@@ -58,13 +58,13 @@ The primary motivation for allowing long (de facto) lifespans on
 today's consensus documents is to keep the network from grinding to
 a halt if the authorities fail to reach consensus for a few hours.
 But in practice, _if_ there is a consensus, then relays should have
-it within an hour or two-- they should not be falling a full day out
+it within an hour or two, so they should not be falling a full day out
 of date.
 
 Therefore we can potentially add a client behavior that, within N
-minutes after the client has seen seen any SNIP with timestamp `T`,
-the client should not accept any snip with timestamp earlier than
-`T-Delta`.
+minutes after the client has seen any SNIP with timestamp `T`,
+the client should not accept any SNIP with timestamp earlier than
+`T - Delta`.
 
 Values for N and Delta are controlled by network parameters
 (`enforce-endive-dl-delay-after` and `allow-endive-dl-delay`

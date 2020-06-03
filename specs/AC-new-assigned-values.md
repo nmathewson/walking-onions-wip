@@ -32,7 +32,7 @@ Begin cells:
 
 End cells:
 
-* We need an extension type for extra data, a value for indices, and a
+* We need an extension type for extra data, a value for indices, a
   value for IPv4 addresses, and a value for IPv6 addresses.
 
 Extensions for decrypted INTRODUCE2 cells:

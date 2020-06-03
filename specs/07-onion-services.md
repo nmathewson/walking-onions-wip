@@ -65,7 +65,7 @@ Services should include these fields based on a set of network
 parameters: `hsv3-intro-snip` and `hsv3-intro-legacy-fields`.
 (See appendix C.)
 
-Clients should use these fields only when walking onion support is
+Clients should use these fields only when Walking Onions support is
 enabled; see section 09.
 
 <!-- Section 7.3 --> <a id='S7.3'></a>
@@ -76,7 +76,7 @@ When a client chooses a rendezvous point for a v3 onion service, it
 similarly has the opportunity to include the SNIP of its rendezvous
 point in the encrypted part of its INTRODUCE cell.  (This may cause
 INTRODUCE cells to become fragmented; see proposal about fragmenting
-relays cells.)
+relay cells.)
 
 > Using the SNIPs in these ways allows services to prove that their
 > introduction points have actually been listed in the consensus
@@ -103,10 +103,10 @@ field unless "hsv3-rend-client-snip" is set to 1.
 
 ## TAP keys and where to find them
 
-If v2 hidden services are still supported when walking onions arrive
+If v2 hidden services are still supported when Walking Onions arrives
 on the network, we have two choices:  We could migrate them to use
 ntor keys instead of TAP, or we could provide a way for TAP keys to
-be advertised with walking onions.
+be advertised with Walking Onions.
 
 The first option would appear to be far simpler. See
 proposal draft 320-tap-out-again.md.
@@ -116,6 +116,6 @@ put a digest of them in SNIPs and give some way to retrieve them
 independently.
 
 (Of course, it's possible that we will have v2 onion services
-deprecated by the time Walking Onions are implemented.  If so, that
+deprecated by the time Walking Onions is implemented.  If so, that
 will simplify matters a great deal too.)
 

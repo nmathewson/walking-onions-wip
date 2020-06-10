@@ -1,0 +1,161 @@
+Walking Onions: project wrap-up
+
+On a grant from the zcash foundation, I've been working on a
+full specification for the Walking Onions design.  This is the last update
+for the spec project.
+
+My previous updates are linked below:
+
+ Week 1:
+   formats, preliminaries, git repositories, binary diffs,
+   metaformat decisions, and Merkle Tree trickery.
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-March/014178.html
+
+ Week 2:
+   Specifying details of SNIP and ENDIVE formats, in CDDL.
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-March/014181.html
+
+ Week 3:
+   Expanding ENDIVEs into SNIPs.
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-March/014194.html
+
+Week 4:
+   Voting (part 1) and extending circuits.
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-March/014207.html
+
+Week 5:
+   Voting (part 2)
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-April/014218.html
+
+Week 6:
+   Editing, voting rules, and client behavior (part 1)
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-April/014222.html
+
+Week 7:
+   Exit policies: How do they work?
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-April/014232.html
+
+Week 8:
+   Onion services, relay honesty, migration and families
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-April/014255.html
+
+Week 9:
+   (There was no week 9)
+
+Week 10:
+   Pushing towards completion
+
+   https://lists.torproject.org/pipermail/tor-dev/2020-May/014281.html
+
+== Since the last update
+
+The last couple weeks of the walking onions project were mostly the
+"fiddly bits" left over from previous work.  I had to edit for
+consistency and clarity, move text around, add specifications for
+missing details, and so on.  There were parts of the voting design
+that didn't actually work as written, and needed to get tweaked
+around.
+
+Index voting was tricky for a few reasons: notably, index weights
+are a complex function of bandwidths, which themselves are voted on.
+I had hoped that we could move the algorithms we use for weighting
+out of the consensus algorithm and into the authorities, but for
+now, I think we're stuck with having them as yet another thing
+authorities need to implement identically.  At least the new consensus
+system itself is extensible, so we have a clear path forward to a
+better consensus approach for indices (if we ever figure one out).
+
+I also needed to figure out handling for VoterCerts: I had done the
+first version of the spec for how they should appear in parameters
+documents before I actually figured out how voting would work, and
+the two approaches weren't compatible.  This took some revision, but
+I think it should work out now.
+
+Similarly, I had known that we'd need to use the "detached
+signatures" mechanism from the existing consensus protocol, but the
+Walking Onions spec didn't actually allow for this.  Fortunately,
+this was an easy chance to make.
+
+And overall, I went through a pretty large number of places in the
+document where there were "XXXX" comments indicating things I had to
+come back to later.
+
+With that, the first version Walking Onions proposal was ready to go
+out as [PROP323].  You can see a rendered version of it over at
+[PROP323-RENDERED], though there will be a better URL for that in
+the future.
+
+I also put out the remaining side related proposals ([PROP321] for
+families, and [PROP322] for link specifiers for directory ports).
+
+== Project recap
+
+When I first described Walking Onions [PROP300], I had only the
+general outlines of a design for a more efficient Tor network: a
+couple of tricks to allow clients to continue building secure paths
+through the network without having to know a list of relays on the
+network.  But I had known there would be remaining problems to
+solve, and listed them in that proposal.
+
+Thanks to this grant, I've been able to flesh out Walking Onions to
+a specified design that I think we could actually build.  In doing
+so, I ran into the typical specification curse, where each change
+led to a need for other changes.  Notably:
+
+  * The need for a new kind of directory-like structure led to the
+    need for a more flexible and parsable metadocument format, and a
+    more generic voting algorithm for authorities.
+
+  * When designing the new meta-format, I found a better approach
+    for handling expiration and clock synchronization between
+    clients and relays that should allow us to be a little more lax
+    with skew, while better resisting attacks based on serving
+    obsolete information.
+
+  * The search for a reasonable solution to exit policies led to
+    a hybrid extraction/designed approach for clustering exit ports
+    by their correlatedness, then designing exit policies around
+    semantic similarity in port types.
+
+  * When enumerating the various ways that clients need to be able
+    to request SNIPs and circuits, I found a need for a span-based
+    SNIP query request, which I hadn't previously known that we'd
+    need.  This simplifies some of our logic.
+
+  * (and more; please see previous updates.)
+
+The resulting documents (proposals 318 through 323) are not final: I
+believe that as we continue to discuss them, and eventually implement
+them, we'll find further opportunities for improvement--and for fixing
+things that I missed when I was designing and writing all of this.  But
+I think we've got a much firmer grasp of this project now.
+
+I think there are parts that we could in principle start building
+now: the preliminary proposals 318 (limiting protocol versions), 319
+(cell fragmentation) and 321 (improved family handling) are high on
+my list for now, if we get time.
+
+And now the design iteration begins!
+
+
+
+
+
+
+[PROP300] https://gitweb.torproject.org/torspec.git/plain/proposals/300-walking-onions.txt
+
+[PROP321] https://gitweb.torproject.org/torspec.git/plain/proposals/321-happy-families.md
+
+[PROP322] https://gitweb.torproject.org/torspec.git/plain/proposals/322-dirport-linkspec.md
+
+[PROP323] https://gitweb.torproject.org/torspec.git/plain/proposals/323-walking-onions-full.md
+
+[PROP323-RENDERED] https://people.torproject.org/~nickm/volatile/rendered.html
